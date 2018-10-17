@@ -1,3 +1,3 @@
 # kalman-filter
 
-Kalman Filter implementation by Python
+Kalman Filter implementation by Scala and Python
