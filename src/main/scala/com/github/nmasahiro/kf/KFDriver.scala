@@ -10,7 +10,7 @@ case class KFDriver(μ: V, Σ: M, yVector: SVector[V], model: StateSpaceModel, s
   @tailrec
   final def estimate(t: Int, μ: V, Σ: M, accum: SVector[(V, M)]): SVector[(V, M)] = {
     // stopCondition check
-    if (stopCondition.apply((t, Σ))) {
+    if (stopCondition((t, Σ))) {
       println(s"stopCondition: t:$t, Σ:$Σ")
       accum
     } else {
@@ -23,7 +23,7 @@ case class KFDriver(μ: V, Σ: M, yVector: SVector[V], model: StateSpaceModel, s
       val μFiltered = μPred + K * (yVector(t) - model.H * μPred)
       val ΣFiltered = ΣPred - K * model.H * ΣPred
 
-      estimate(t + 1, μFiltered, ΣFiltered, accum :+ (μFiltered, ΣFiltered))
+      estimate(t + 1, μFiltered, ΣFiltered, accum :+ ((μFiltered, ΣFiltered)))
     }
   }
 

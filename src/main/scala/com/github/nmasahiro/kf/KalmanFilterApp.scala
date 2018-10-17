@@ -4,17 +4,20 @@ import java.io.{File, PrintWriter}
 
 import breeze.linalg.{DenseMatrix, DenseVector}
 import com.github.nmasahiro.util.Using
+import com.typesafe.config.ConfigFactory
 
 object KalmanFilterApp extends App {
 
-  val T = 30
-  val x0 = DenseVector(0.0, 0.0)
-  val xDim = 2
-  val yDim = 1
+  val conf = ConfigFactory.load()
+  val T = conf.getInt("kf.common.sim-num")
+  val xDim = conf.getInt("kf.common.x-dim")
+  val yDim = conf.getInt("kf.common.y-dim")
+
   // initial distribution
   val μ0 = DenseVector.zeros[Double](xDim)
   val Σ0 = DenseMatrix.eye[Double](xDim)
 
+  val x0 = DenseVector(0.0, 0.0)
   // state model
   val F = DenseMatrix((0.0, -0.7), (1.0, -1.5))
   val G = DenseMatrix(0.5, 1.0) // note that the shape of this matrix is (2, 1)
