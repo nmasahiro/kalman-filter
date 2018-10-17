@@ -16,16 +16,11 @@ case class KFDriver(μ: V, Σ: M, yVector: SVector[V], model: StateSpaceModel, s
     } else {
       // prediction
       val μPred = model.F * μ
-
       val ΣPred = model.F * Σ * model.F.t + model.G * model.Q * model.G.t
 
       // filtering
-      //println(s"ΣPred.rows:${ΣPred.rows}, ΣPred.cols:${ΣPred.cols}")
-      //println(s"model.H.rows:${model.H.rows}, model.H.cols:${model.H.cols}")
       val K = ΣPred * model.H.t * inv(model.H * ΣPred * model.H.t + model.R)
-
       val μFiltered = μPred + K * (yVector(t) - model.H * μPred)
-
       val ΣFiltered = ΣPred - K * model.H * ΣPred
 
       estimate(t + 1, μFiltered, ΣFiltered, accum :+ (μFiltered, ΣFiltered))
