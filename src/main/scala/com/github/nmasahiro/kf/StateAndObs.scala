@@ -17,22 +17,22 @@ object StateAndObs {
         accum
       }
       else {
-        val EigSym(lambdaQ, evsQ) = eigSym(model.Q)
+        val EigSym(lambdaQ, evsQ) = eigSym(model.Q(t))
         val sqrtQ = evsQ * diag(lambdaQ.map(q => math.sqrt(q))) * evsQ.t
-        val v = DenseVector.zeros[Double](model.G.cols).map(_ => Rand.gaussian.draw())
-        val x = model.F * xPrev + model.G * (sqrtQ * v)
-        val EigSym(lambdaR, evsR) = eigSym(model.R)
+        val v = DenseVector.zeros[Double](model.G(t).cols).map(_ => Rand.gaussian.draw())
+        val x = model.F(t) * xPrev + model.G(t) * (sqrtQ * v)
+        val EigSym(lambdaR, evsR) = eigSym(model.R(t))
         val sqrtR = evsR * diag(lambdaR.map(r => math.sqrt(r))) * evsR.t
-        val w = DenseVector.zeros[Double](model.H.rows).map(_ => Rand.gaussian.draw())
-        val y = model.H * x + (sqrtR * w)
-        run(t + 1, x, accum :+ (x, y))
+        val w = DenseVector.zeros[Double](model.H(t).rows).map(_ => Rand.gaussian.draw())
+        val y = model.H(t) * x + (sqrtR * w)
+        run(t + 1, x, accum :+ ((x, y)))
       }
     }
 
-    val EigSym(lambdaR, evsR) = eigSym(model.R)
+    val EigSym(lambdaR, evsR) = eigSym(model.R(0))
     val sqrtR = evsR * diag(lambdaR.map(r => math.sqrt(r))) * evsR.t
-    val w = DenseVector.zeros[Double](model.H.rows).map(_ => Rand.gaussian.draw())
-    val y0 = model.H * x0 + (sqrtR * w)
+    val w = DenseVector.zeros[Double](model.H(0).rows).map(_ => Rand.gaussian.draw())
+    val y0 = model.H(0) * x0 + (sqrtR * w)
     run(0, x0, SVector[(V, V)]((x0, y0)))
   }
 
